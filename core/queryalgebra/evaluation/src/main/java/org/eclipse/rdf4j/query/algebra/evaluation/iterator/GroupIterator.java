@@ -29,23 +29,13 @@ import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.QueryEvaluationException;
-import org.eclipse.rdf4j.query.algebra.AbstractAggregateOperator;
-import org.eclipse.rdf4j.query.algebra.AggregateOperator;
-import org.eclipse.rdf4j.query.algebra.Avg;
-import org.eclipse.rdf4j.query.algebra.Count;
-import org.eclipse.rdf4j.query.algebra.Group;
-import org.eclipse.rdf4j.query.algebra.GroupConcat;
-import org.eclipse.rdf4j.query.algebra.GroupElem;
+import org.eclipse.rdf4j.query.algebra.*;
 import org.eclipse.rdf4j.query.algebra.MathExpr.MathOp;
-import org.eclipse.rdf4j.query.algebra.Max;
-import org.eclipse.rdf4j.query.algebra.Min;
-import org.eclipse.rdf4j.query.algebra.Sample;
-import org.eclipse.rdf4j.query.algebra.Sum;
-import org.eclipse.rdf4j.query.algebra.ValueExpr;
 import org.eclipse.rdf4j.query.algebra.evaluation.EvaluationStrategy;
 import org.eclipse.rdf4j.query.algebra.evaluation.QueryBindingSet;
 import org.eclipse.rdf4j.query.algebra.evaluation.ValueExprEvaluationException;
 import org.eclipse.rdf4j.query.algebra.evaluation.util.MathUtil;
+import org.eclipse.rdf4j.query.algebra.evaluation.util.QueryEvaluationUtil;
 import org.eclipse.rdf4j.query.algebra.evaluation.util.ValueComparator;
 import org.eclipse.rdf4j.query.impl.EmptyBindingSet;
 import org.mapdb.DB;
@@ -477,7 +467,7 @@ public class GroupIterator extends CloseableIteratorIteration<BindingSet, QueryE
 			if (v != null && distinctValue(v)) {
 				if (min == null) {
 					min = v;
-				} else if (comparator.compare(v, min) < 0) {
+				} else if (QueryEvaluationUtil.compare(v, min, Compare.CompareOp.LE, false)) {
 					min = v;
 				}
 			}
@@ -508,7 +498,7 @@ public class GroupIterator extends CloseableIteratorIteration<BindingSet, QueryE
 			if (v != null && distinctValue(v)) {
 				if (max == null) {
 					max = v;
-				} else if (comparator.compare(v, max) > 0) {
+				} else if (QueryEvaluationUtil.compare(v, max, Compare.CompareOp.GE, false)) {
 					max = v;
 				}
 			}
